@@ -1,0 +1,16 @@
+CREATE SCHEMA IF NOT EXISTS st;
+
+CREATE TABLE st.user (
+	user_id SERIAL PRIMARY KEY,
+	user_name character varying(255) NOT NULL UNIQUE,
+	password_cache character varying(255) NOT NULL
+);
+
+CREATE TABLE st.message (
+	sender integer,
+  receiver integer,
+  message_id SERIAL PRIMARY KEY,
+  message character varying(255),
+  FOREIGN KEY (sender) REFERENCES st.user(user_id),
+  FOREIGN KEY (receiver) REFERENCES st.user(user_id)
+);
