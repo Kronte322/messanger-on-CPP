@@ -55,6 +55,8 @@ target_link_libraries(Message PUBLIC Server DBConnection)
 target_link_libraries(Server PUBLIC	${PQXX_LIBRARIES} ${PQ_LIBRARY} DBConnection Message)
 target_link_libraries(DBConnection PRIVATE SqlQueries)
 
+target_link_libraries(Client Message)
+
 target_link_libraries(launch_server PUBLIC Server)
 target_link_libraries(main PUBLIC Client)
 

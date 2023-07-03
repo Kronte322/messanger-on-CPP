@@ -12,6 +12,6 @@ int main(int argc, char* argv[]) {
     Server server("127.0.0.1", port_of_the_server);
     server.StartServer();
   } catch (const std::exception& except) {
-    except.what();
+    std::cout << except.what();
   }
 }

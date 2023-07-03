@@ -1,8 +1,12 @@
 
 #include <netinet/in.h>
 
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 #include <string>
+
+#include "Message.hpp"
 
 class Client {
  public:
@@ -14,7 +18,16 @@ class Client {
 
   void ProcessConnection();
 
+  auto& SetMutex();
+
+  auto& SetConditionVariable();
+
+  auto* SetMessage();
+
  private:
+  Message* message_;
+  std::mutex mutex_;
+  std::condition_variable cond_variable_;
   sockaddr_in server_address_;
   sockaddr_in client_address_;
   std::string ip_address_of_the_server_;

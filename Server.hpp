@@ -23,6 +23,8 @@ class Server {
 
   const DBConnection& GetDbConnection();
 
+  std::vector<std::string>& SetMessages();
+
  private:
   std::mutex mutex_;
   DBConnection db_connection_;

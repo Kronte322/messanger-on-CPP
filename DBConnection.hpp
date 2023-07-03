@@ -21,6 +21,5 @@ class DBConnection {
  private:
   void Execute(const std::string& query) const;
 
-  pqxx::connection connection_;
-  mutable pqxx::work worker_;
+  mutable pqxx::connection connection_;
 };

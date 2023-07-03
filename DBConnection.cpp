@@ -5,8 +5,7 @@
 DBConnection::DBConnection()
     : connection_(
           "dbname = postgres user = postgres password = antisocialplayer \
-      hostaddr = 192.168.0.108 port = 5432"),
-      worker_(connection_) {}
+      hostaddr = 192.168.0.108 port = 5432") {}
 
 void DBConnection::ExecuteLogIn(const std::string& user_name,
                                 const std::string& password_hash) const {
@@ -24,8 +23,15 @@ void DBConnection::ExecuteAddMessage(const std::string& text, int sender_id,
 }
 
 void DBConnection::Execute(const std::string& query) const {
-  worker_.exec(query);
-  worker_.commit();
+  pqxx::work l_work(connection_);
+  try {
+    l_work.exec(query);
+    l_work.commit();
+  } catch (const std::exception& except) {
+    std::cout << except.what();
+    l_work.abort();
+    throw;
+  }
 }
 
 DBConnection::~DBConnection() { connection_.disconnect(); }

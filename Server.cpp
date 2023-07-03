@@ -47,6 +47,7 @@ Server::~Server() = default;
 
 void Server::StartServer() {
   signal(SIGPIPE, SIG_IGN);
+
   if (listen(*socket_discriptor_, 5) < 0) {
     throw std::runtime_error("error listen\n");
   }
@@ -82,24 +83,34 @@ void Server::ProcessConnection(int client_discriptor,
   char message[] = "correct";
   while (strcmp(buffer, "quit") != 0) {
     bzero(&buffer, sizeof(buffer));
-    if (write(client_discriptor, message, sizeof(message)) < 0) {
-      std::cout << "cannot write from socket" << std::endl;
-      DisconnectMessage(client_address);
-      break;
-    }
+
     if (read(client_discriptor, buffer, 255) < 0) {
       std::cout << "cannot read from socket" << std::endl;
       DisconnectMessage(client_address);
       break;
     }
+
     {
       std::lock_guard<std::mutex> guard(mutex_);
-      messages_.push_back(buffer);
+      try {
+        Message::Deserialization(buffer)->Implement(*this);
+      } catch (const std::exception& except) {
+        std::cout << except.what();
+      }
+
       std::copy(messages_.begin(), messages_.end(),
                 std::ostream_iterator<std::string>(std::cout, " "));
       std::cout << std::endl;
     }
+
+    if (write(client_discriptor, message, sizeof(message)) < 0) {
+      std::cout << "cannot write from socket" << std::endl;
+      DisconnectMessage(client_address);
+      break;
+    }
   }
 }
+
+std::vector<std::string>& Server::SetMessages() { return messages_; }
 
 const DBConnection& Server::GetDbConnection() { return db_connection_; }
