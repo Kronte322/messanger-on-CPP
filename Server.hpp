@@ -13,6 +13,7 @@
 class Server {
  public:
   Server(const std::string& ip_address, int port);
+
   ~Server();
 
   void StartServer();

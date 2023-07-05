@@ -16,9 +16,14 @@ const int sign_in_message_id = 3;
 class Message {
  public:
   virtual void Implement(Server&) = 0;
+
   virtual std::string Serialization() = 0;
+
   static std::unique_ptr<Message> Deserialization(
       const std::string& serialized_string);
+
+  virtual Message* GetCopy() const = 0;
+
   virtual ~Message() {}
 
  private:
@@ -30,10 +35,16 @@ class Message {
 class TextMessage : public Message {
  public:
   TextMessage(const std::string& text, int sender_id, int receiver_id);
+
   void Implement(Server& server) override;
+
   std::string Serialization() override;
+
   static std::unique_ptr<Message> Deserialization(
       const std::string& serialized_string);
+
+  Message* GetCopy() const override;
+
   ~TextMessage();
 
  private:
@@ -45,9 +56,15 @@ class TextMessage : public Message {
 class SignInMessage : public Message {
  public:
   SignInMessage(const std::string& user_name, const std::string& password_hash);
+
   void Implement(Server& server) override;
+
   std::string Serialization() override;
-  static SignInMessage Deserialization(const std::string& serialized_string);
+
+  static std::unique_ptr<Message> Deserialization(
+      const std::string& serialized_string);
+
+  Message* GetCopy() const override;
 
   ~SignInMessage();
 
@@ -59,9 +76,15 @@ class SignInMessage : public Message {
 class LogInMessage : public Message {
  public:
   LogInMessage(const std::string& user_name, const std::string& password_hash);
+
   void Implement(Server& server) override;
+
   std::string Serialization() override;
-  static LogInMessage Deserialization(const std::string& serialized_string);
+
+  static std::unique_ptr<Message> Deserialization(
+      const std::string& serialized_string);
+
+  Message* GetCopy() const override;
 
   ~LogInMessage();
 

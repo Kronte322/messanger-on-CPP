@@ -44,12 +44,9 @@ void Client::ProcessConnection() {
   std::string buf;
   while (strcmp(message, "quit") != 0) {
     bzero(&message, sizeof(message));
-    // std::unique_lock lock(mutex_);
-    // cond_variable_.wait(lock);
-    // message_->CopyAt(&message);
-
-    std::cin >> message;
-    buf = TextMessage(message, 1, 1).Serialization();
+    std::unique_lock lock(mutex_);
+    cond_variable_.wait(lock);
+    buf = message_->Serialization();
 
     if (write(*client_discriptor_, buf.c_str(), buf.size()) < 0) {
       throw std::runtime_error("error while writing to socket folder");
@@ -60,8 +57,10 @@ void Client::ProcessConnection() {
   }
 }
 
-auto& Client::SetMutex() { return mutex_; }
+std::mutex& Client::SetMutex() { return mutex_; }
 
-auto& Client::SetConditionVariable() { return cond_variable_; }
+std::condition_variable& Client::SetConditionVariable() {
+  return cond_variable_;
+}
 
-auto* Client::SetMessage() { return message_; }
+std::unique_ptr<Message>& Client::SetMessage() { return message_; }

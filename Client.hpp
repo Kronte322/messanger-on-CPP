@@ -18,14 +18,14 @@ class Client {
 
   void ProcessConnection();
 
-  auto& SetMutex();
+  std::mutex& SetMutex();
 
-  auto& SetConditionVariable();
+  std::condition_variable& SetConditionVariable();
 
-  auto* SetMessage();
+  std::unique_ptr<Message>& SetMessage();
 
  private:
-  Message* message_;
+  std::unique_ptr<Message> message_;
   std::mutex mutex_;
   std::condition_variable cond_variable_;
   sockaddr_in server_address_;

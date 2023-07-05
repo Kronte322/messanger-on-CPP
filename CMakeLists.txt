@@ -11,7 +11,7 @@ if (NOT WIN32)
 		if (PQXX_FOUND)
 			if (PQXX_VERSION STRGREATER "7")
 				message(STATUS "libpqxx version ${PQXX_VERSION}, requesting c++17")
-				set (CMAKE_CXX_STANDARD 17)
+				set (CMAKE_CXX_STANDARD 20)
 			endif()
 		endif()
 	endif()
@@ -31,12 +31,16 @@ else()
 		message( STATUS "Found pqxx: ${PQXX_LIBRARIES}, ${PQ_LIBRARY}, ${PQXX_INCLUDE_DIR}")
 		if (PQXX_VERSION STRGREATER "7")
 			message(STATUS "libpqxx version ${PQXX_VERSION}, requesting c++17")
-			set (CMAKE_CXX_STANDARD 17)
+			set (CMAKE_CXX_STANDARD 20)
 		endif()
 	else()
 		message(STATUS "Could NOT find pqxx and pq library")
 	endif()
 endif()
+
+
+
+find_package(SFML 2.5 COMPONENTS graphics window system)
 
 include_directories(${PQXX_INCLUDE_DIR})
 
@@ -49,6 +53,8 @@ add_library(SqlQueries SqlQueries.hpp SqlQueries.cpp)
 add_library(Server Server.hpp Server.cpp)
 add_library(Client Client.hpp Client.cpp)
 add_library(Message Message.hpp Message.cpp)
+add_library(TextBox TextBox.hpp TextBox.cpp)
+# add_library(Button Button.hpp Button.cpp)
 
 
 target_link_libraries(Message PUBLIC Server DBConnection)
@@ -58,5 +64,5 @@ target_link_libraries(DBConnection PRIVATE SqlQueries)
 target_link_libraries(Client Message)
 
 target_link_libraries(launch_server PUBLIC Server)
-target_link_libraries(main PUBLIC Client)
+target_link_libraries(main PUBLIC Client TextBox sfml-graphics sfml-system sfml-window)
 
