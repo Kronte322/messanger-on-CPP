@@ -106,6 +106,7 @@ void TextBox::Update(sf::RenderWindow& window, sf::Event& event) {
     if (is_active_ && !rectangle_.getGlobalBounds().contains(
                           static_cast<sf::Vector2f>(position_of_mouse))) {
       is_active_ = false;
+      CheckIsLastActive();
     } else if (!is_active_ &&
                rectangle_.getGlobalBounds().contains(
                    static_cast<sf::Vector2f>(position_of_mouse))) {

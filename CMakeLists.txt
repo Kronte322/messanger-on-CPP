@@ -54,15 +54,20 @@ add_library(Server Server.hpp Server.cpp)
 add_library(Client Client.hpp Client.cpp)
 add_library(Message Message.hpp Message.cpp)
 add_library(TextBox TextBox.hpp TextBox.cpp)
+add_library(UI UI.hpp UI.cpp)
+add_library(App App.hpp App.cpp)
 # add_library(Button Button.hpp Button.cpp)
 
 
 target_link_libraries(Message PUBLIC Server DBConnection)
 target_link_libraries(Server PUBLIC	${PQXX_LIBRARIES} ${PQ_LIBRARY} DBConnection Message)
 target_link_libraries(DBConnection PRIVATE SqlQueries)
+target_link_libraries(UI PUBLIC TextBox sfml-graphics)
+target_link_libraries(TextBox PUBLIC sfml-graphics)
+
 
 target_link_libraries(Client Message)
-
+target_link_libraries(App PUBLIC Client TextBox UI sfml-graphics sfml-system sfml-window)
 target_link_libraries(launch_server PUBLIC Server)
-target_link_libraries(main PUBLIC Client TextBox sfml-graphics sfml-system sfml-window)
+target_link_libraries(main PUBLIC App)
 

@@ -93,7 +93,11 @@ void Server::ProcessConnection(int client_discriptor,
     {
       std::lock_guard<std::mutex> guard(mutex_);
       try {
-        Message::Deserialization(buffer)->Implement(*this);
+        static_cast<ClientMessage*>(BaseMessage::Deserialization(buffer).get())
+            ->Implement(*this);
+        // static_cast<std::unique_ptr<ClientMessage>>(
+        //     BaseMessage::Deserialization(buffer))
+        //     ->Implement(*this);
       } catch (const std::exception& except) {
         std::cout << except.what();
       }

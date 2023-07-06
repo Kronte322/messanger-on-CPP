@@ -6,8 +6,8 @@
 #include "DBConnection.hpp"
 
 const std::unordered_map<
-    int, std::function<std::unique_ptr<Message>(const std::string&)>>
-    Message::actions_ = {
+    int, std::function<std::unique_ptr<BaseMessage>(const std::string&)>>
+    BaseMessage::actions_ = {
         std::make_pair(SerializationConstants::text_message_id,
                        TextMessage::Deserialization),
         std::make_pair(SerializationConstants::sign_in_message_id,
@@ -15,14 +15,14 @@ const std::unordered_map<
         std::make_pair(SerializationConstants::log_in_message_id,
                        LogInMessage::Deserialization)};
 
-std::unique_ptr<Message> Message::Deserialization(
+std::unique_ptr<BaseMessage> BaseMessage::Deserialization(
     const std::string& serialized_string) {
   std::istringstream stream(serialized_string);
 
   int id_of_message = 0;
   stream >> id_of_message;
 
-  return Message::actions_.at(id_of_message)(
+  return BaseMessage::actions_.at(id_of_message)(
       std::string(std::istreambuf_iterator<char>(stream), {}));
 }
 
@@ -40,7 +40,7 @@ std::string TextMessage::Serialization() {
          std::to_string(text_.size()) + " " + text_ + '\0';
 }
 
-std::unique_ptr<Message> TextMessage::Deserialization(
+std::unique_ptr<BaseMessage> TextMessage::Deserialization(
     const std::string& serialized_string) {
   std::istringstream stream(serialized_string);
 
@@ -52,11 +52,11 @@ std::unique_ptr<Message> TextMessage::Deserialization(
   stream.get();
   std::string text(std::string(std::istreambuf_iterator<char>(stream), {}));
 
-  return std::unique_ptr<Message>(
+  return std::unique_ptr<BaseMessage>(
       new TextMessage(text, sender_id, receiver_id));
 }
 
-Message* TextMessage::GetCopy() const { return new TextMessage(*this); }
+ClientMessage* TextMessage::GetCopy() const { return new TextMessage(*this); }
 
 TextMessage::~TextMessage() = default;
 
@@ -73,7 +73,7 @@ std::string SignInMessage::Serialization() {
          user_name_ + " " + password_hash_ + " " + '\0';
 }
 
-std::unique_ptr<Message> SignInMessage::Deserialization(
+std::unique_ptr<BaseMessage> SignInMessage::Deserialization(
     const std::string& serialized_string) {
   std::istringstream stream(serialized_string);
 
@@ -82,10 +82,13 @@ std::unique_ptr<Message> SignInMessage::Deserialization(
 
   stream >> user_name >> password_hash;
 
-  return std::unique_ptr<Message>(new SignInMessage(user_name, password_hash));
+  return std::unique_ptr<BaseMessage>(
+      new SignInMessage(user_name, password_hash));
 }
 
-Message* SignInMessage::GetCopy() const { return new SignInMessage(*this); }
+ClientMessage* SignInMessage::GetCopy() const {
+  return new SignInMessage(*this);
+}
 
 SignInMessage::~SignInMessage() {}
 
@@ -102,7 +105,7 @@ std::string LogInMessage::Serialization() {
          user_name_ + " " + password_hash_ + " " + '\0';
 }
 
-std::unique_ptr<Message> LogInMessage::Deserialization(
+std::unique_ptr<BaseMessage> LogInMessage::Deserialization(
     const std::string& serialized_string) {
   std::istringstream stream(serialized_string);
 
@@ -111,9 +114,10 @@ std::unique_ptr<Message> LogInMessage::Deserialization(
 
   stream >> user_name >> password_hash;
 
-  return std::unique_ptr<Message>(new LogInMessage(user_name, password_hash));
+  return std::unique_ptr<BaseMessage>(
+      new LogInMessage(user_name, password_hash));
 }
 
-Message* LogInMessage::GetCopy() const { return new LogInMessage(*this); }
+ClientMessage* LogInMessage::GetCopy() const { return new LogInMessage(*this); }
 
 LogInMessage::~LogInMessage() {}

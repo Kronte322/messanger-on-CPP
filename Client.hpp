@@ -1,4 +1,4 @@
-
+#pragma once
 #include <netinet/in.h>
 
 #include <condition_variable>
@@ -22,10 +22,10 @@ class Client {
 
   std::condition_variable& SetConditionVariable();
 
-  std::unique_ptr<Message>& SetMessage();
+  std::unique_ptr<ClientMessage>& SetMessage();
 
  private:
-  std::unique_ptr<Message> message_;
+  std::unique_ptr<ClientMessage> message_;
   std::mutex mutex_;
   std::condition_variable cond_variable_;
   sockaddr_in server_address_;

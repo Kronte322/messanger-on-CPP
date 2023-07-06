@@ -2,11 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 
+#include "AppConstants.hpp"
+
 template <typename... Args>
 class Button {
  public:
   Button(sf::Vector2f position, sf::Vector2f size, sf::Color color,
-         std::function<void(Args...)> func,
+         std::function<void(Args&...)> func,
          bool is_continuosly_pressed = false);
   virtual void Update(sf::RenderWindow& window, sf::Event& event,
                       Args&... args);
@@ -14,7 +16,11 @@ class Button {
   virtual ~Button() = default;
 
  private:
-  std::function<void(Args...)> func_;
+  static sf::Color FadeIn(const sf::Color& color) {
+    return sf::Color(std::max(color.r - 20, 0), std::max(color.g - 20, 0),
+                     std::max(color.b - 20, 0));
+  }
+  std::function<void(Args&...)> func_;
   sf::Vector2f position_;
   sf::RectangleShape rectangle_;
   sf::Color color_;
@@ -22,30 +28,53 @@ class Button {
   bool is_continuously_pressed_ = false;
 };
 
-// template <typename... Args>
-// class TextButton {
-//  public:
-//   TextButton(sf::V);
-//   void Update(sf::RenderWindow& window, sf::Event& event,
-//               Args&... args) override;
-//   void Draw(sf::RenderWindow& window) override;
-//   ~TextButton() = default;
+template <typename... Args>
+class TextButton : public Button<Args...> {
+ public:
+  TextButton(const sf::String& str, const sf::Font& font, size_t character_size,
+             sf::Vector2f position, sf::Color color_for_rectangle,
+             sf::Color color_for_button,
+             const std::function<void(Args&...)>& func,
+             bool is_continuosly_pressed = false);
+  void Draw(sf::RenderWindow& window) override;
+  ~TextButton() = default;
 
-//  private:
-//   std::function<void(Args)> func_;
-//   sf::RectangleShape rectangle_;
-//   bool is_pressed_ = false;
-//   bool is_continuously_pressed_ = false;
-// };
+ private:
+  sf::Text text_;
+  sf::Color color_for_text_;
+  sf::String str_;
+};
 
-sf::Color FadeIn(const sf::Color& color) {
-  return sf::Color(std::max(color.r - 20, 0), std::max(color.g - 20, 0),
-                   std::max(color.b - 20, 0));
+template <typename... Args>
+TextButton<Args...>::TextButton(const sf::String& str, const sf::Font& font,
+                                size_t character_size, sf::Vector2f position,
+                                sf::Color color_for_rectangle,
+                                sf::Color color_for_text,
+                                const std::function<void(Args&...)>& func,
+                                bool is_continuosly_pressed)
+    : Button<Args...>(
+          position,
+          sf::Vector2f(character_size * str.getSize(), character_size),
+          color_for_rectangle, func, is_continuosly_pressed) {
+  str_ = str;
+  color_for_text_ = color_for_text;
+  text_.setFont(font);
+  text_.setCharacterSize(character_size);
+  text_.setPosition(position);
+  text_.setFillColor(color_for_text_);
+  text_.setStyle(sf::Text::Bold);
+  text_.setString(str_);
+}
+
+template <typename... Args>
+void TextButton<Args...>::Draw(sf::RenderWindow& window) {
+  Button<Args...>::Draw(window);
+  window.draw(text_);
 }
 
 template <typename... Args>
 Button<Args...>::Button(sf::Vector2f position, sf::Vector2f size,
-                        sf::Color color, std::function<void(Args...)> func,
+                        sf::Color color, std::function<void(Args&...)> func,
                         bool is_continuosly_pressed)
     : position_(position),
       color_(color),

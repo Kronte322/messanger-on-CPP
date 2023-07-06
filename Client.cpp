@@ -63,4 +63,4 @@ std::condition_variable& Client::SetConditionVariable() {
   return cond_variable_;
 }
 
-std::unique_ptr<Message>& Client::SetMessage() { return message_; }
+std::unique_ptr<ClientMessage>& Client::SetMessage() { return message_; }

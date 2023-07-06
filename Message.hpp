@@ -13,26 +13,35 @@ const int log_in_message_id = 2;
 const int sign_in_message_id = 3;
 }  // namespace SerializationConstants
 
-class Message {
- public:
-  virtual void Implement(Server&) = 0;
+class Client;
 
+class BaseMessage {
+ public:
   virtual std::string Serialization() = 0;
 
-  static std::unique_ptr<Message> Deserialization(
+  static std::unique_ptr<BaseMessage> Deserialization(
       const std::string& serialized_string);
 
-  virtual Message* GetCopy() const = 0;
-
-  virtual ~Message() {}
+  virtual ~BaseMessage() = default;
 
  private:
   static const std::unordered_map<
-      int, std::function<std::unique_ptr<Message>(const std::string&)>>
+      int, std::function<std::unique_ptr<BaseMessage>(const std::string&)>>
       actions_;
 };
 
-class TextMessage : public Message {
+class ClientMessage : public BaseMessage {
+ public:
+  virtual void Implement(Server&) = 0;
+
+  virtual ClientMessage* GetCopy() const = 0;
+
+  virtual ~ClientMessage() = default;
+
+ private:
+};
+
+class TextMessage : public ClientMessage {
  public:
   TextMessage(const std::string& text, int sender_id, int receiver_id);
 
@@ -40,10 +49,10 @@ class TextMessage : public Message {
 
   std::string Serialization() override;
 
-  static std::unique_ptr<Message> Deserialization(
+  static std::unique_ptr<BaseMessage> Deserialization(
       const std::string& serialized_string);
 
-  Message* GetCopy() const override;
+  ClientMessage* GetCopy() const override;
 
   ~TextMessage();
 
@@ -53,7 +62,7 @@ class TextMessage : public Message {
   int receiver_id_ = 0;
 };
 
-class SignInMessage : public Message {
+class SignInMessage : public ClientMessage {
  public:
   SignInMessage(const std::string& user_name, const std::string& password_hash);
 
@@ -61,10 +70,10 @@ class SignInMessage : public Message {
 
   std::string Serialization() override;
 
-  static std::unique_ptr<Message> Deserialization(
+  static std::unique_ptr<BaseMessage> Deserialization(
       const std::string& serialized_string);
 
-  Message* GetCopy() const override;
+  ClientMessage* GetCopy() const override;
 
   ~SignInMessage();
 
@@ -73,7 +82,7 @@ class SignInMessage : public Message {
   std::string password_hash_;
 };
 
-class LogInMessage : public Message {
+class LogInMessage : public ClientMessage {
  public:
   LogInMessage(const std::string& user_name, const std::string& password_hash);
 
@@ -81,14 +90,88 @@ class LogInMessage : public Message {
 
   std::string Serialization() override;
 
-  static std::unique_ptr<Message> Deserialization(
+  static std::unique_ptr<BaseMessage> Deserialization(
       const std::string& serialized_string);
 
-  Message* GetCopy() const override;
+  ClientMessage* GetCopy() const override;
 
   ~LogInMessage();
 
  private:
   std::string user_name_;
   std::string password_hash_;
+};
+
+class ServerMessage : public BaseMessage {
+ public:
+  ServerMessage() = default;
+
+  virtual void Implement(Client& client) = 0;
+
+  virtual ServerMessage* GetCopy() const = 0;
+
+  virtual ~ServerMessage() = default;
+
+ private:
+};
+
+class TextResponse : public ServerMessage {
+ public:
+  TextResponse(const std::string& text, int sender_id, int receiver_id);
+
+  void Implement(Client& client) override;
+
+  std::string Serialization() override;
+
+  static std::unique_ptr<BaseMessage> Deserialization(
+      const std::string& serialized_string);
+
+  ServerMessage* GetCopy() const override;
+
+  ~TextResponse();
+
+ private:
+  std::string text_;
+  int sender_id_ = 0;
+  int receiver_id_ = 0;
+};
+
+class SignInResponse : public ServerMessage {
+ public:
+  SignInResponse(const std::string& user_name,
+                 const std::string& password_hash);
+
+  void Implement(Client& client) override;
+
+  std::string Serialization() override;
+
+  static std::unique_ptr<BaseMessage> Deserialization(
+      const std::string& serialized_string);
+
+  ServerMessage* GetCopy() const override;
+
+  ~SignInResponse();
+
+ private:
+  std::string user_name_;
+  std::string password_hash_;
+};
+
+class LogInResponse : public ServerMessage {
+ public:
+  LogInResponse(int id);
+
+  void Implement(Client& client) override;
+
+  std::string Serialization() override;
+
+  static std::unique_ptr<BaseMessage> Deserialization(
+      const std::string& serialized_string);
+
+  ServerMessage* GetCopy() const override;
+
+  ~LogInResponse();
+
+ private:
+  int id_;
 };
