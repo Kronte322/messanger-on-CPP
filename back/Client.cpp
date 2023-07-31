@@ -6,10 +6,11 @@
 
 #include <iostream>
 
+#include "../front/App.hpp"
 #include "Message.hpp"
 
-Client::Client(const std::string& ip_address, int port)
-    : ip_address_of_the_server_(ip_address), port_(port) {
+Client::Client(const std::string& ip_address, int port, App& app)
+    : ip_address_of_the_server_(ip_address), port_(port), app_(app) {
   bzero((char*)&server_address_, sizeof(server_address_));
   bzero((char*)&client_address_, sizeof(client_address_));
 
@@ -54,6 +55,12 @@ void Client::ProcessConnection() {
     if (read(*client_discriptor_, message, sizeof(message)) < 0) {
       throw std::runtime_error("error while reading from socket folder");
     }
+    try {
+      static_cast<ServerMessage*>(BaseMessage::Deserialization(message).get())
+          ->Implement(*this);
+    } catch (const std::exception& except) {
+      std::cout << except.what();
+    }
   }
 }
 
@@ -64,3 +71,5 @@ std::condition_variable& Client::SetConditionVariable() {
 }
 
 std::unique_ptr<ClientMessage>& Client::SetMessage() { return message_; }
+
+App& Client::SetApp() { return app_; }

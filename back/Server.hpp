@@ -8,7 +8,7 @@
 #include <thread>
 #include <vector>
 
-#include "DBConnection.hpp"
+#include "../back/db/DBConnection.hpp"
 
 class Server {
  public:

@@ -11,6 +11,9 @@ namespace SerializationConstants {
 const int text_message_id = 1;
 const int log_in_message_id = 2;
 const int sign_in_message_id = 3;
+const int text_response_id = 4;
+const int log_in_response_id = 5;
+const int sign_in_response_id = 6;
 }  // namespace SerializationConstants
 
 class Client;
@@ -117,7 +120,7 @@ class ServerMessage : public BaseMessage {
 
 class TextResponse : public ServerMessage {
  public:
-  TextResponse(const std::string& text, int sender_id, int receiver_id);
+  TextResponse(int code_of_respones);
 
   void Implement(Client& client) override;
 
@@ -131,15 +134,12 @@ class TextResponse : public ServerMessage {
   ~TextResponse();
 
  private:
-  std::string text_;
-  int sender_id_ = 0;
-  int receiver_id_ = 0;
+  int code_of_response_;
 };
 
 class SignInResponse : public ServerMessage {
  public:
-  SignInResponse(const std::string& user_name,
-                 const std::string& password_hash);
+  SignInResponse(int code_of_response);
 
   void Implement(Client& client) override;
 
@@ -153,8 +153,7 @@ class SignInResponse : public ServerMessage {
   ~SignInResponse();
 
  private:
-  std::string user_name_;
-  std::string password_hash_;
+  int code_of_response_;
 };
 
 class LogInResponse : public ServerMessage {

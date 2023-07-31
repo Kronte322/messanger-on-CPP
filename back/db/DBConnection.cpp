@@ -5,7 +5,7 @@
 DBConnection::DBConnection()
     : connection_(
           "dbname = postgres user = postgres password = antisocialplayer \
-      hostaddr = 192.168.0.108 port = 5432") {}
+      hostaddr = 127.0.0.1 port = 5432") {}
 
 void DBConnection::ExecuteLogIn(const std::string& user_name,
                                 const std::string& password_hash) const {

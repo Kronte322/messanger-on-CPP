@@ -52,8 +52,13 @@ void TextBox::AddLineBreak(TextBox& text_box) {
 void TextBox::AddElement(sf::Uint32 symbol) {
   CheckIsLastActive();
   entered_text_ += symbol;
-  if (entered_text_.getSize() - Rfind(entered_text_, '\n') > limit_of_chars_) {
+  text_.setString(entered_text_);
+  if (text_.getGlobalBounds().width > rectangle_.getGlobalBounds().width) {
+    entered_text_.erase(entered_text_.getSize() - 1);
+    text_.setString(entered_text_);
     AddLineBreak(*this);
+    entered_text_ += symbol;
+    text_.setString(entered_text_);
   }
 }
 
@@ -61,42 +66,38 @@ std::unordered_map<char32_t, std::function<void(TextBox&)>> TextBox::actions_ =
     {std::make_pair('\b', TextBox::RemoveLastElement),
      std::make_pair('\r', TextBox::AddLineBreak)};
 
-TextBox::TextBox(sf::Font& font, std::string back_ground_text,
+TextBox::TextBox(sf::Font& font, sf::Vector2f position, int size_of_character,
+                 size_t limit_of_chars, std::string back_ground_text,
                  sf::Color color_for_text, sf::Color color_for_rectangle,
-                 int size_of_character, sf::Vector2f position,
-                 sf::Vector2f size_of_box, size_t limit_of_chars,
                  bool is_password, bool is_line_breakable)
     : font_(font),
       back_text_(back_ground_text),
-      color_for_text_(color_for_text),
-      color_for_rectangle_(color_for_rectangle),
-      size_of_character_(size_of_character),
       position_(position),
-      size_of_box_(size_of_box),
+      size_of_character_(size_of_character),
       limit_of_chars_(limit_of_chars),
       is_password_(is_password),
       is_line_breakable_(is_line_breakable) {
-  rectangle_.setSize(
-      {static_cast<float>((limit_of_chars_ + 1) * size_of_character_),
-       static_cast<float>(size_of_character_ + 10)});
-  rectangle_.setOutlineColor({100, 100, 100});
-  rectangle_.setFillColor({80, 80, 80});
+  rectangle_.setSize({static_cast<float>((limit_of_chars_)*size_of_character_),
+                      static_cast<float>(size_of_character_)});
   rectangle_.setOutlineThickness(5);
+  rectangle_.setFillColor(color_for_rectangle);
+  rectangle_.setOutlineColor(
+      {static_cast<sf::Uint8>(color_for_rectangle.r - 20),
+       static_cast<sf::Uint8>(color_for_rectangle.g - 20),
+       static_cast<sf::Uint8>(color_for_rectangle.b - 20)});
   rectangle_.setPosition(position_);
 
   text_.setFont(font_);
   text_.setCharacterSize(size_of_character_);
-  text_.setPosition({position_.x + size_of_character_ * 0.25f, position_.y});
-  text_.setFillColor(color_for_text_);
+  text_.setPosition({position_.x, position_.y});
+  text_.setFillColor(color_for_text);
   text_.setStyle(sf::Text::Bold);
 
   back_ground_text_.setFont(font_);
   back_ground_text_.setCharacterSize(size_of_character_);
-  back_ground_text_.setPosition(
-      {position_.x + size_of_character_ * 0.25f, position_.y});
-  back_ground_text_.setFillColor(color_for_text_);
+  back_ground_text_.setPosition({position_.x, position_.y});
+  back_ground_text_.setFillColor(color_for_text);
   back_ground_text_.setStyle(sf::Text::Bold);
-
   back_ground_text_.setString(back_text_);
 }
 
@@ -112,7 +113,8 @@ void TextBox::Update(sf::RenderWindow& window, sf::Event& event) {
                    static_cast<sf::Vector2f>(position_of_mouse))) {
       is_active_ = true;
     }
-  } else if (is_active_) {
+  }
+  if (is_active_) {
     if (event.type == sf::Event::TextEntered) {
       if (!actions_.contains(event.text.unicode)) {
         AddElement(event.text.unicode);
@@ -156,3 +158,5 @@ void TextBox::Draw(sf::RenderWindow& window) {
     window.draw(text_);
   }
 }
+
+std::string TextBox::GetEnteredText() const { return entered_text_; }

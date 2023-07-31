@@ -3,8 +3,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-#include "Client.hpp"
-#include "UI.hpp"
+#include "../back/Client.hpp"
+#include "../back/ClientStorage.hpp"
+#include "../front/UI.hpp"
 
 class App {
  public:
@@ -12,10 +13,15 @@ class App {
 
   void ProcessMainLoop();
 
+  sf::Font& SetFont();
+
+  int& SetUserId();
+
  private:
   void SendMessage(const ClientMessage& message);
 
   sf::RenderWindow window_;
+  ClientStorage data_;
   sf::Font font_;
   Client client_;
   UI ui_;

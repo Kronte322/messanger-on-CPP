@@ -8,9 +8,11 @@
 
 #include "Message.hpp"
 
+class App;
+
 class Client {
  public:
-  Client(const std::string& ip_address, int port);
+  Client(const std::string& ip_address, int port, App& app);
 
   ~Client();
 
@@ -24,6 +26,8 @@ class Client {
 
   std::unique_ptr<ClientMessage>& SetMessage();
 
+  App& SetApp();
+
  private:
   std::unique_ptr<ClientMessage> message_;
   std::mutex mutex_;
@@ -33,4 +37,5 @@ class Client {
   std::string ip_address_of_the_server_;
   int port_ = 0;
   std::shared_ptr<int> client_discriptor_;
+  App& app_;
 };
