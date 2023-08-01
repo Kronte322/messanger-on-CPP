@@ -1,25 +1,66 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include <unordered_map>
-#include <vector>
+#include <gtkmm.h>
 
-#include "../back/ClientStorage.hpp"
-#include "../front/ui_elements/UIElements.hpp"
+#include <memory>
+#include <vector>
+class UI;
+
+class Window {
+ public:
+  Window(UI& ui);
+
+  virtual void Init() = 0;
+  virtual void OpenWindow() = 0;
+  virtual void CloseWindow() = 0;
+  virtual ~Window() = default;
+
+ protected:
+  std::shared_ptr<Gtk::Builder> builder_;
+  UI& ui_;
+};
+
+class LogInWindow : public Window {
+ public:
+  LogInWindow(UI& ui);
+
+  void Init() override;
+  void OpenWindow() override;
+  void CloseWindow() override;
+
+ private:
+  void OnLogInButtonClicked();
+  void OnSignUpButtonClicked();
+};
+
+class SignUpWindow : public Window {
+ public:
+  SignUpWindow(UI& ui);
+
+  void Init() override;
+  void OpenWindow() override;
+  void CloseWindow() override;
+
+ private:
+  void OnBackButtonClicked();
+  void OnSignUpButtonClicked();
+};
 
 class UI {
  public:
-  UI(sf::Font& font);
+  UI();
 
-  void AddElement(int id, std::unique_ptr<UIElement>&& element);
+  int RunGUI();
 
-  void DeleteElement(int id);
+  LogInWindow& SetLogInWindow();
 
-  void Update(sf::RenderWindow& window, sf::Event& event, ClientStorage& data);
+  SignUpWindow& SetSignUpWindow();
 
-  void Draw(sf::RenderWindow& window);
+  Glib::RefPtr<Gtk::Application>& SetApp();
 
  private:
-  sf::Font& font_;
-  std::unordered_map<int, std::unique_ptr<UIElement>> elements_;
+  void Start();
+
+  LogInWindow log_in_window_;
+  SignUpWindow sign_up_window_;
+  Glib::RefPtr<Gtk::Application> app_;
 };

@@ -1,7 +1,4 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
 
 #include "../back/Client.hpp"
 #include "../back/ClientStorage.hpp"
@@ -10,20 +7,12 @@
 class App {
  public:
   App();
-
-  void ProcessMainLoop();
-
-  sf::Font& SetFont();
-
-  int& SetUserId();
+  ~App();
 
  private:
-  void SendMessage(const ClientMessage& message);
+  void ProcessMainLoop();
 
-  sf::RenderWindow window_;
   ClientStorage data_;
-  sf::Font font_;
-  Client client_;
+  DefaultClient client_;
   UI ui_;
-  int id_identifier_;
 };

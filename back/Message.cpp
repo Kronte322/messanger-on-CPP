@@ -133,7 +133,7 @@ LogInMessage::~LogInMessage() {}
 TextResponse::TextResponse(int code_of_response)
     : code_of_response_(code_of_response) {}
 
-void TextResponse::Implement(Client& client) {}
+void TextResponse::Implement(DefaultClient& client) {}
 
 std::string TextResponse::Serialization() {
   return std::to_string(SerializationConstants::text_response_id) + " " +
@@ -158,7 +158,7 @@ TextResponse::~TextResponse() {}
 SignInResponse::SignInResponse(int code_of_response)
     : code_of_response_(code_of_response) {}
 
-void SignInResponse::Implement(Client& client) {}
+void SignInResponse::Implement(DefaultClient& client) {}
 
 std::string SignInResponse::Serialization() {
   return std::to_string(SerializationConstants::sign_in_response_id) + " " +
@@ -184,9 +184,7 @@ SignInResponse::~SignInResponse() {}
 
 LogInResponse::LogInResponse(int id) : id_(id) {}
 
-void LogInResponse::Implement(Client& client) {
-  client.SetApp().SetUserId() = id_;
-}
+void LogInResponse::Implement(DefaultClient& client) {}
 
 std::string LogInResponse::Serialization() {
   return std::to_string(SerializationConstants::log_in_response_id) + " " +

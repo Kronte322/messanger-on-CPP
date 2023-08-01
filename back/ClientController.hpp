@@ -2,10 +2,8 @@
 
 class ClientController {
  public:
-  ClientController(Client& client);
-
-  
+  ClientController(DefaultClient& client);
 
  private:
-  Client& client_;
+  DefaultClient& client_;
 };

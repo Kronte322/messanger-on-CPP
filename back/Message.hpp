@@ -16,7 +16,7 @@ const int log_in_response_id = 5;
 const int sign_in_response_id = 6;
 }  // namespace SerializationConstants
 
-class Client;
+class DefaultClient;
 
 class BaseMessage {
  public:
@@ -109,7 +109,7 @@ class ServerMessage : public BaseMessage {
  public:
   ServerMessage() = default;
 
-  virtual void Implement(Client& client) = 0;
+  virtual void Implement(DefaultClient& client) = 0;
 
   virtual ServerMessage* GetCopy() const = 0;
 
@@ -122,7 +122,7 @@ class TextResponse : public ServerMessage {
  public:
   TextResponse(int code_of_respones);
 
-  void Implement(Client& client) override;
+  void Implement(DefaultClient& client) override;
 
   std::string Serialization() override;
 
@@ -141,7 +141,7 @@ class SignInResponse : public ServerMessage {
  public:
   SignInResponse(int code_of_response);
 
-  void Implement(Client& client) override;
+  void Implement(DefaultClient& client) override;
 
   std::string Serialization() override;
 
@@ -160,7 +160,7 @@ class LogInResponse : public ServerMessage {
  public:
   LogInResponse(int id);
 
-  void Implement(Client& client) override;
+  void Implement(DefaultClient& client) override;
 
   std::string Serialization() override;
 

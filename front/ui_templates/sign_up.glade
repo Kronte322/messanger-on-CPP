@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.40.0 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkWindow" id="window">
+    <property name="can-focus">False</property>
+    <property name="default-width">800</property>
+    <property name="default-height">800</property>
+    <child>
+      <object class="GtkFixed" id="grid">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="sign_up_button">
+            <property name="label" translatable="yes">Sign Up</property>
+            <property name="width-request">100</property>
+            <property name="height-request">34</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">350</property>
+            <property name="y">391</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="back_button">
+            <property name="label" translatable="yes">Back</property>
+            <property name="width-request">100</property>
+            <property name="height-request">34</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">350</property>
+            <property name="y">429</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="username_text_box">
+            <property name="width-request">200</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="placeholder-text" translatable="yes">Username:</property>
+          </object>
+          <packing>
+            <property name="x">300</property>
+            <property name="y">262</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="repeat_password_text_box">
+            <property name="width-request">200</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="visibility">False</property>
+            <property name="invisible-char">•</property>
+            <property name="placeholder-text" translatable="yes">Repeat password:</property>
+          </object>
+          <packing>
+            <property name="x">300</property>
+            <property name="y">335</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="password_text_box">
+            <property name="width-request">200</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="visibility">False</property>
+            <property name="invisible-char">•</property>
+            <property name="placeholder-text" translatable="yes">Password:</property>
+          </object>
+          <packing>
+            <property name="x">300</property>
+            <property name="y">299</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="error_label">
+            <property name="width-request">298</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">That username is used! Choose the other one.</property>
+          </object>
+          <packing>
+            <property name="x">252</property>
+            <property name="y">212</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="correct_label">
+            <property name="width-request">298</property>
+            <property name="height-request">20</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Correct!</property>
+          </object>
+          <packing>
+            <property name="x">252</property>
+            <property name="y">212</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

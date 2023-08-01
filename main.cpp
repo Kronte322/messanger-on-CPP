@@ -1,6 +1,3 @@
 #include "front/App.hpp"
 
-int main() {
-  App app;
-  app.ProcessMainLoop();
-}
+int main() { App app; }

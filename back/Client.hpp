@@ -2,40 +2,51 @@
 #include <netinet/in.h>
 
 #include <condition_variable>
+#include <deque>
 #include <memory>
 #include <mutex>
 #include <string>
-
-#include "Message.hpp"
 
 class App;
 
 class Client {
  public:
-  Client(const std::string& ip_address, int port, App& app);
+  virtual void Connect(const std::string& ip_address, int port) = 0;
+  virtual void Disconnect() = 0;
+  virtual ~Client() = default;
+};
 
-  ~Client();
+class SendClient : public Client {
+ public:
+  virtual void Send(const std::string& message) = 0;
+};
 
-  void Connect();
+class BasicClient : public Client {
+ public:
+  virtual std::string Send(const std::string& message) = 0;
+};
 
-  void ProcessConnection();
+class DefaultClient : public BasicClient {
+ public:
+  DefaultClient();
 
-  std::mutex& SetMutex();
+  ~DefaultClient();
 
-  std::condition_variable& SetConditionVariable();
+  void Connect(const std::string& ip_address, int port) override;
 
-  std::unique_ptr<ClientMessage>& SetMessage();
+  void Disconnect() override;
 
-  App& SetApp();
+  std::string Send(const std::string& message) override;
 
  private:
-  std::unique_ptr<ClientMessage> message_;
+  void ProcessConnection();
+
+  std::thread connection_;
   std::mutex mutex_;
   std::condition_variable cond_variable_;
+  std::deque<std::string> messages_;
+  std::string answer_;
   sockaddr_in server_address_;
-  sockaddr_in client_address_;
-  std::string ip_address_of_the_server_;
-  int port_ = 0;
   std::shared_ptr<int> client_discriptor_;
-  App& app_;
+  bool is_active_ = false;
 };
