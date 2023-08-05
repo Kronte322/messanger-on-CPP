@@ -42,6 +42,7 @@ class DefaultClient : public BasicClient {
   void ProcessConnection();
 
   std::thread connection_;
+  std::mutex mutex_for_cond_var_;
   std::mutex mutex_;
   std::condition_variable cond_variable_;
   std::deque<std::string> messages_;

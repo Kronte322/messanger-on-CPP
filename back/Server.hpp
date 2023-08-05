@@ -8,6 +8,7 @@
 #include <thread>
 #include <vector>
 
+#include "../back/ServerImplementer.hpp"
 #include "../back/db/DBConnection.hpp"
 
 class Server {
@@ -29,11 +30,11 @@ class Server {
  private:
   std::mutex mutex_;
   DBConnection db_connection_;
+  ServerImplementer implementer_;
   struct sockaddr_in server_address_;
   struct sockaddr_in client_address_;
   std::string ip_address_;
   int port_ = 0;
   std::vector<std::thread> threads_;
   std::shared_ptr<int> socket_discriptor_;
-  std::vector<std::string> messages_;
 };

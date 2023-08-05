@@ -3,6 +3,8 @@
 
 class ClientStorage {
  public:
+  int& SetUserId();
+
  private:
   int user_id_;
 };

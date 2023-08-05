@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-std::string SignInSql(const std::string& user_name,
+std::string SignUpSql(const std::string& user_name,
                       const std::string& password);
 
 std::string LogInSql(const std::string& user_name, const std::string& password);

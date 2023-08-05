@@ -43,7 +43,7 @@ void DefaultClient::Connect(const std::string& ip_address, int port) {
 
 void DefaultClient::Disconnect() {
   if (is_active_) {
-    Send("quit");
+    Send(QuitMessage().Serialization());
     is_active_ = false;
   }
 }
@@ -54,7 +54,7 @@ std::string DefaultClient::Send(const std::string& message) {
     messages_.push_back(message);
   }
   cond_variable_.notify_one();
-  std::unique_lock lock(mutex_);
+  std::unique_lock lock(mutex_for_cond_var_);
   cond_variable_.wait(lock);
   return answer_;
 }
@@ -62,8 +62,8 @@ std::string DefaultClient::Send(const std::string& message) {
 void DefaultClient::ProcessConnection() {
   std::string message;
   char buf[256];
-  while (message != "quit") {
-    std::unique_lock lock(mutex_);
+  while (is_active_) {
+    std::unique_lock lock(mutex_for_cond_var_);
     if (messages_.empty()) {
       cond_variable_.wait(lock);
     }
@@ -75,10 +75,16 @@ void DefaultClient::ProcessConnection() {
     if (write(*client_discriptor_, message.c_str(), message.size()) < 0) {
       throw std::runtime_error("error while writing to socket folder");
     }
+    bzero((char*)&buf, sizeof(buf));
     if (read(*client_discriptor_, &buf, sizeof(buf)) < 0) {
       throw std::runtime_error("error while reading from socket folder");
     }
     answer_ = buf;
+
+    std::cout << answer_ << std::endl;
+    if (answer_ == std::to_string(SerializationConstants::quit_response_id)) {
+      is_active_ = false;
+    }
     cond_variable_.notify_one();
   }
 }

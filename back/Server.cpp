@@ -81,7 +81,8 @@ void Server::ProcessConnection(int client_discriptor,
                                sockaddr_in client_address) {
   char buffer[256];
   char message[] = "correct";
-  while (strcmp(buffer, "quit") != 0) {
+  bool is_active = true;
+  while (is_active) {
     bzero(&buffer, sizeof(buffer));
 
     if (read(client_discriptor, buffer, 255) < 0) {
@@ -89,32 +90,27 @@ void Server::ProcessConnection(int client_discriptor,
       DisconnectMessage(client_address);
       break;
     }
-
+    std::string response;
+    std::cout << std::string(buffer) << '\n';
+    if (std::string(buffer) ==
+        std::to_string(SerializationConstants::quit_message_id)) {
+      is_active = false;
+    }
     {
       std::lock_guard<std::mutex> guard(mutex_);
       try {
-        static_cast<ClientMessage*>(BaseMessage::Deserialization(buffer).get())
-            ->Implement(*this);
-        // static_cast<std::unique_ptr<ClientMessage>>(
-        //     BaseMessage::Deserialization(buffer))
-        //     ->Implement(*this);
+        response = implementer_.Implement(buffer, db_connection_);
       } catch (const std::exception& except) {
-        std::cout << except.what();
+        std::cout << except.what() << "99";
       }
-
-      std::copy(messages_.begin(), messages_.end(),
-                std::ostream_iterator<std::string>(std::cout, " "));
-      std::cout << std::endl;
     }
 
-    if (write(client_discriptor, message, sizeof(message)) < 0) {
-      std::cout << "cannot write from socket" << std::endl;
+    if (write(client_discriptor, response.c_str(), response.size()) < 0) {
+      std::cout << "cannot write to socket" << std::endl;
       DisconnectMessage(client_address);
       break;
     }
   }
 }
-
-std::vector<std::string>& Server::SetMessages() { return messages_; }
 
 const DBConnection& Server::GetDbConnection() { return db_connection_; }

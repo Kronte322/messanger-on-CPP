@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkWindow" id="window">
+    <property name="default-width">800</property>
+    <property name="default-height">800</property>
+    <property name="child">
+      <object class="GtkFixed" id="grid">
+        <child>
+          <object class="GtkButton" id="send_button">
+            <layout>
+              <property name="transform">translate(690, 755)</property>
+            </layout>
+            <property name="label" translatable="1">Send</property>
+            <property name="width-request">100</property>
+            <property name="height-request">34</property>
+            <property name="focusable">1</property>
+            <property name="receives-default">1</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="message_text_box">
+            <layout>
+              <property name="transform">translate(280, 755)</property>
+            </layout>
+            <property name="width-request">400</property>
+            <property name="focusable">1</property>
+            <property name="placeholder-text" translatable="1">Your message:</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="friend_button">
+            <layout>
+              <property name="transform">translate(690, 10)</property>
+            </layout>
+            <property name="label" translatable="1">friend</property>
+            <property name="width-request">100</property>
+            <property name="height-request">50</property>
+            <property name="focusable">1</property>
+            <property name="receives-default">1</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrollable">
+            <layout>
+              <property name="transform">translate(280, 10)</property>
+            </layout>
+            <property name="width-request">400</property>
+            <property name="height-request">700</property>
+            <property name="focusable">1</property>
+            <property name="window-placement">bottom-left</property>
+            <property name="shadow-type">in</property>
+            <property name="overlay-scrolling">0</property>
+            <property name="propagate-natural-height">1</property>
+            <property name="child">
+              <object class="GtkViewport" id="messages_viewport">
+                <property name="width-request">400</property>
+                <property name="height-request">40</property>
+                <property name="hscroll-policy">natural</property>
+                <property name="vscroll-policy">natural</property>
+                <property name="child">
+                  <object class="GtkTextView" id="messages_text_view">
+                    <property name="focusable">1</property>
+                    <property name="editable">0</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="indent">20</property>
+                    <property name="cursor-visible">0</property>
+                  </object>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrollable_window">
+            <layout>
+              <property name="transform">translate(10, 10)</property>
+            </layout>
+            <property name="width-request">250</property>
+            <property name="height-request">700</property>
+            <property name="focusable">1</property>
+            <property name="shadow-type">in</property>
+            <property name="child">
+              <object class="GtkViewport" id="view_port">
+                <property name="width-request">200</property>
+                <property name="height-request">700</property>
+                <property name="child">
+                  <object class="GtkTreeView" id="list_with_contacts">
+                    <property name="focusable">1</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="tree_selection"/>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </property>
+  </object>
+</interface>

@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <vector>
+
+#include "../back/ClientController.hpp"
 class UI;
 
 class Window {
@@ -27,6 +29,9 @@ class LogInWindow : public Window {
   void OpenWindow() override;
   void CloseWindow() override;
 
+  void OpenCorrectMessage();
+  void OpenErrorMessage();
+
  private:
   void OnLogInButtonClicked();
   void OnSignUpButtonClicked();
@@ -40,6 +45,9 @@ class SignUpWindow : public Window {
   void OpenWindow() override;
   void CloseWindow() override;
 
+  void OpenCorrectMessage();
+  void OpenErrorMessage();
+
  private:
   void OnBackButtonClicked();
   void OnSignUpButtonClicked();
@@ -47,13 +55,15 @@ class SignUpWindow : public Window {
 
 class UI {
  public:
-  UI();
+  UI(ClientController& client_controller);
 
   int RunGUI();
 
   LogInWindow& SetLogInWindow();
 
   SignUpWindow& SetSignUpWindow();
+
+  ClientController& SetClientController();
 
   Glib::RefPtr<Gtk::Application>& SetApp();
 
@@ -63,4 +73,5 @@ class UI {
   LogInWindow log_in_window_;
   SignUpWindow sign_up_window_;
   Glib::RefPtr<Gtk::Application> app_;
+  ClientController& client_controller_;
 };

@@ -7,14 +7,14 @@ DBConnection::DBConnection()
           "dbname = postgres user = postgres password = antisocialplayer \
       hostaddr = 127.0.0.1 port = 5432") {}
 
-void DBConnection::ExecuteLogIn(const std::string& user_name,
-                                const std::string& password_hash) const {
-  Execute(LogInSql(user_name, password_hash));
+pqxx::result DBConnection::ExecuteLogIn(
+    const std::string& user_name, const std::string& password_hash) const {
+  return Execute(LogInSql(user_name, password_hash));
 }
 
-void DBConnection::ExecuteSignIn(const std::string& user_name,
+void DBConnection::ExecuteSignUp(const std::string& user_name,
                                  const std::string& password_hash) const {
-  Execute(SignInSql(user_name, password_hash));
+  Execute(SignUpSql(user_name, password_hash));
 }
 
 void DBConnection::ExecuteAddMessage(const std::string& text, int sender_id,
@@ -22,16 +22,18 @@ void DBConnection::ExecuteAddMessage(const std::string& text, int sender_id,
   Execute(SendMessageSql(sender_id, receiver_id, text));
 }
 
-void DBConnection::Execute(const std::string& query) const {
-  pqxx::work l_work(connection_);
+pqxx::result DBConnection::Execute(const std::string& query) const {
+  pqxx::work work(connection_);
+  pqxx::result res;
   try {
-    l_work.exec(query);
-    l_work.commit();
+    res = work.exec(query);
+    work.commit();
   } catch (const std::exception& except) {
     std::cout << except.what();
-    l_work.abort();
+    work.abort();
     throw;
   }
+  return res;
 }
 
 DBConnection::~DBConnection() { connection_.disconnect(); }

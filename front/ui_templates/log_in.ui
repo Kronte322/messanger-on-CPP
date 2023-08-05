@@ -7,21 +7,9 @@
     <property name="child">
       <object class="GtkFixed" id="grid">
         <child>
-          <object class="GtkButton" id="log_in_button">
-            <layout>
-              <property name="transform">translate(350, 356)</property>
-            </layout>
-            <property name="label" translatable="1">Log In</property>
-            <property name="width-request">100</property>
-            <property name="height-request">34</property>
-            <property name="focusable">1</property>
-            <property name="receives-default">1</property>
-          </object>
-        </child>
-        <child>
           <object class="GtkButton" id="sign_up_button">
             <layout>
-              <property name="transform">translate(350, 398)</property>
+              <property name="transform">translate(350, 391)</property>
             </layout>
             <property name="label" translatable="1">Sign Up</property>
             <property name="width-request">100</property>
@@ -31,48 +19,58 @@
           </object>
         </child>
         <child>
-          <object class="GtkEntry" id="user_name_text_box">
+          <object class="GtkButton" id="log_in_button">
             <layout>
-              <property name="transform">translate(300, 270)</property>
+              <property name="transform">translate(350, 353)</property>
+            </layout>
+            <property name="label" translatable="1">Log In</property>
+            <property name="width-request">100</property>
+            <property name="height-request">34</property>
+            <property name="focusable">1</property>
+            <property name="receives-default">1</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="username_text_box">
+            <layout>
+              <property name="transform">translate(300, 262)</property>
             </layout>
             <property name="width-request">200</property>
             <property name="focusable">1</property>
-            <property name="max-width-chars">30</property>
-            <property name="placeholder-text" translatable="1">Enter username</property>
+            <property name="placeholder-text" translatable="1">Username:</property>
           </object>
         </child>
         <child>
           <object class="GtkEntry" id="password_text_box">
             <layout>
-              <property name="transform">translate(300, 313)</property>
+              <property name="transform">translate(300, 299)</property>
             </layout>
             <property name="width-request">200</property>
-            <property name="height-request">34</property>
             <property name="focusable">1</property>
             <property name="visibility">0</property>
-            <property name="max-width-chars">30</property>
-            <property name="placeholder-text" translatable="1">Enter password</property>
+            <property name="invisible-char">•</property>
+            <property name="placeholder-text" translatable="1">Password:</property>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="user_name_text_box_label">
+          <object class="GtkLabel" id="error_label">
             <layout>
-              <property name="transform">translate(195, 276)</property>
+              <property name="transform">translate(252, 212)</property>
             </layout>
-            <property name="width-request">103</property>
+            <property name="visible">0</property>
+            <property name="width-request">298</property>
+            <property name="label" translatable="1">Wrong username or password!</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="correct_label">
+            <layout>
+              <property name="transform">translate(252, 212)</property>
+            </layout>
+            <property name="visible">0</property>
+            <property name="width-request">298</property>
             <property name="height-request">20</property>
-            <property name="label" translatable="1">Your username:</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="password_text_box_label">
-            <layout>
-              <property name="transform">translate(196, 322)</property>
-            </layout>
-            <property name="width-request">102</property>
-            <property name="height-request">34</property>
-            <property name="label" translatable="1">Your password:
-</property>
+            <property name="label" translatable="1">Correct!</property>
           </object>
         </child>
       </object>

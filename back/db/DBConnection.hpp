@@ -9,17 +9,17 @@ class DBConnection {
 
   ~DBConnection();
 
-  void ExecuteLogIn(const std::string& user_name,
-                    const std::string& password_hash) const;
+  pqxx::result ExecuteLogIn(const std::string& user_name,
+                            const std::string& password_hash) const;
 
-  void ExecuteSignIn(const std::string& user_name,
+  void ExecuteSignUp(const std::string& user_name,
                      const std::string& password_hash) const;
 
   void ExecuteAddMessage(const std::string& text, int sender_id,
                          int receiver_id) const;
 
  private:
-  void Execute(const std::string& query) const;
+  pqxx::result Execute(const std::string& query) const;
 
   mutable pqxx::connection connection_;
 };

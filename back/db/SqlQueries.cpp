@@ -1,6 +1,6 @@
 #include "SqlQueries.hpp"
 
-std::string SignInSql(const std::string& user_name,
+std::string SignUpSql(const std::string& user_name,
                       const std::string& password_cache) {
   return std::string(
              "INSERT INTO st.user(user_name, password_cache) VALUES (") +

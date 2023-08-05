@@ -1,11 +1,13 @@
 #include "./UI.hpp"
 
 #include <iostream>
+#include <thread>
 
-UI::UI()
+UI::UI(ClientController& client_controller)
     : app_(Gtk::Application::create("Messenger")),
       log_in_window_(*this),
-      sign_up_window_(*this) {
+      sign_up_window_(*this),
+      client_controller_(client_controller) {
   app_->signal_activate().connect([this]() { Start(); });
 }
 
@@ -14,6 +16,8 @@ int UI::RunGUI() { return app_->run(); }
 LogInWindow& UI::SetLogInWindow() { return log_in_window_; }
 
 SignUpWindow& UI::SetSignUpWindow() { return sign_up_window_; }
+
+ClientController& UI::SetClientController() { return client_controller_; }
 
 Glib::RefPtr<Gtk::Application>& UI::SetApp() { return app_; }
 
@@ -50,7 +54,47 @@ void LogInWindow::CloseWindow() {
   window->hide();
 }
 
-void LogInWindow::OnLogInButtonClicked() {}
+void LogInWindow::OpenCorrectMessage() {
+  auto label = builder_->get_widget<Gtk::Label>("correct_label");
+  auto error_label = builder_->get_widget<Gtk::Label>("error_label");
+  if (!label->get_visible()) {
+    label->show();
+  }
+  if (error_label->get_visible()) {
+    error_label->hide();
+  }
+}
+
+void LogInWindow::OpenErrorMessage() {
+  auto label = builder_->get_widget<Gtk::Label>("error_label");
+  auto correct_label = builder_->get_widget<Gtk::Label>("correct_label");
+  if (!label->get_visible()) {
+    label->show();
+  }
+  if (correct_label->get_visible()) {
+    correct_label->hide();
+  }
+}
+
+void LogInWindow::OnLogInButtonClicked() {
+  auto user_name =
+      builder_->get_widget<Gtk::Entry>("username_text_box")->get_text();
+  auto password =
+      builder_->get_widget<Gtk::Entry>("password_text_box")->get_text();
+  if (!user_name.empty() && !password.empty()) {
+    std::thread([this, &user_name, &password]() {
+      auto response =
+          ui_.SetClientController().SendLogInMessage(user_name, password);
+      if (response == -1) {
+        OpenErrorMessage();
+      } else {
+        OpenCorrectMessage();
+      }
+    }).detach();
+  } else {
+    OpenErrorMessage();
+  }
+}
 
 void LogInWindow::OnSignUpButtonClicked() {
   CloseWindow();
@@ -81,23 +125,51 @@ void SignUpWindow::CloseWindow() {
   window->hide();
 }
 
+void SignUpWindow::OpenCorrectMessage() {
+  auto label = builder_->get_widget<Gtk::Label>("correct_label");
+  auto error_label = builder_->get_widget<Gtk::Label>("error_label");
+  if (!label->get_visible()) {
+    label->show();
+  }
+  if (error_label->get_visible()) {
+    error_label->hide();
+  }
+}
+
+void SignUpWindow::OpenErrorMessage() {
+  auto label = builder_->get_widget<Gtk::Label>("error_label");
+  auto correct_label = builder_->get_widget<Gtk::Label>("correct_label");
+  if (!label->get_visible()) {
+    label->show();
+  }
+  if (correct_label->get_visible()) {
+    correct_label->hide();
+  }
+}
+
 void SignUpWindow::OnBackButtonClicked() {
   CloseWindow();
   ui_.SetLogInWindow().OpenWindow();
 }
 
 void SignUpWindow::OnSignUpButtonClicked() {
-  auto username =
+  auto user_name =
       builder_->get_widget<Gtk::Entry>("username_text_box")->get_text();
   auto password =
       builder_->get_widget<Gtk::Entry>("password_text_box")->get_text();
   auto repeat_password =
       builder_->get_widget<Gtk::Entry>("repeat_password_text_box")->get_text();
-  if ((password != repeat_password) || password.empty() || username.empty()) {
-    auto label = builder_->get_widget<Gtk::Label>("error_label");
-    if (!label->get_visible()) {
-      label->show();
-    }
+  if ((password != repeat_password) || password.empty() || user_name.empty()) {
+    OpenErrorMessage();
   } else {
+    std::thread([this, &user_name, &password]() {
+      auto response =
+          ui_.SetClientController().SendSignUpMessage(user_name, password);
+      if (response == -1) {
+        OpenErrorMessage();
+      } else {
+        OpenCorrectMessage();
+      }
+    }).detach();
   }
 }
