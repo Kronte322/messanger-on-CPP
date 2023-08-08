@@ -8,7 +8,11 @@ ClientImplementer::ClientImplementer() {
   actions_ = {
       std::make_pair(sign_up_response_id, &ClientImplementer::ImplementSignUp),
       std::make_pair(log_in_response_id, &ClientImplementer::ImplementLogIn),
-      std::make_pair(quit_response_id, &ClientImplementer::ImplementQuit)};
+      std::make_pair(quit_response_id, &ClientImplementer::ImplementQuit),
+      std::make_pair(get_user_id_response_id,
+                     &ClientImplementer::ImplementGetUserId),
+      std::make_pair(text_response_id,
+                     &ClientImplementer::ImplementSendMessage)};
 }
 
 int ClientImplementer::Implement(const std::string& message,
@@ -17,33 +21,36 @@ int ClientImplementer::Implement(const std::string& message,
 
   int id_of_message = 0;
   stream >> id_of_message;
-
-  stream.get();
   return actions_.at(id_of_message)(
       std::string(std::istreambuf_iterator<char>(stream), {}), data);
 }
 
-int ClientImplementer::ImplementSignUp(const std::string& message,
+int ClientImplementer::ImplementSignUp(std::string message,
                                        ClientStorage& data) {
-  std::istringstream stream(message);
-  int response = 0;
-  stream >> response;
-
+  int response = GetInt(message);
   return response;
 }
 
-int ClientImplementer::ImplementLogIn(const std::string& message,
+int ClientImplementer::ImplementLogIn(std::string message,
                                       ClientStorage& data) {
-  std::istringstream stream(message);
-  char interm = 0;
-  int id = 0;
-  stream >> interm;
-  stream >> id;
+  int id = GetInt(message);
   data.SetUserId() = id;
   return id;
 }
 
-int ClientImplementer::ImplementQuit(const std::string& message,
-                                     ClientStorage& data) {
+int ClientImplementer::ImplementQuit(std::string message, ClientStorage& data) {
   return 1;
+}
+
+int ClientImplementer::ImplementGetUserId(std::string message,
+                                          ClientStorage& data) {
+  int id = GetInt(message);
+  data.SetReceiverId() = id;
+  return id;
+}
+
+int ClientImplementer::ImplementSendMessage(std::string message,
+                                            ClientStorage& data) {
+  int code = GetInt(message);
+  return code;
 }

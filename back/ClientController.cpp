@@ -19,3 +19,16 @@ int ClientController::SendLogInMessage(const std::string& user_name,
   auto response = client_.Send(message.Serialization());
   return implementer_.Implement(response, data_);
 }
+
+int ClientController::SendGetUserIdMessage(const std::string& user_name) {
+  auto message = GetUserIdMessage(user_name);
+  auto response = client_.Send(message.Serialization());
+  return implementer_.Implement(response, data_);
+}
+
+int ClientController::SendTextMessage(int sender_id, int receiver_id,
+                                      const std::string& text) {
+  auto message = TextMessage(sender_id, receiver_id, text);
+  auto response = client_.Send(message.Serialization());
+  return implementer_.Implement(response, data_);
+}

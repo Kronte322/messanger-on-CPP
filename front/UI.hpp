@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../back/ClientController.hpp"
+#include "../back/ClientStorage.hpp"
 class UI;
 
 class Window {
@@ -53,9 +54,25 @@ class SignUpWindow : public Window {
   void OnSignUpButtonClicked();
 };
 
+class MainWindow : public Window {
+ public:
+  MainWindow(UI& ui);
+
+  void Init() override;
+  void OpenWindow() override;
+  void CloseWindow() override;
+
+  void OpenCorrectMessage();
+  void OpenErrorMessage();
+
+ private:
+  void OnSendButtonClicked();
+  void OnProfileButtonClicked();
+};
+
 class UI {
  public:
-  UI(ClientController& client_controller);
+  UI(ClientController& client_controller, ClientStorage& client_storage);
 
   int RunGUI();
 
@@ -63,7 +80,11 @@ class UI {
 
   SignUpWindow& SetSignUpWindow();
 
+  MainWindow& SetMainWindow();
+
   ClientController& SetClientController();
+
+  ClientStorage& SetClientStorage();
 
   Glib::RefPtr<Gtk::Application>& SetApp();
 
@@ -72,6 +93,8 @@ class UI {
 
   LogInWindow log_in_window_;
   SignUpWindow sign_up_window_;
+  MainWindow main_window_;
   Glib::RefPtr<Gtk::Application> app_;
   ClientController& client_controller_;
+  ClientStorage& client_storage_;
 };

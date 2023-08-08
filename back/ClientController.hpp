@@ -14,6 +14,11 @@ class ClientController {
   int SendLogInMessage(const std::string& user_name,
                        const std::string& password);
 
+  int SendGetUserIdMessage(const std::string& user_name);
+
+  int SendTextMessage(int sender_id, int receiver_id,
+                      const std::string& message);
+
  private:
   DefaultClient& client_;
   ClientStorage& data_;

@@ -12,14 +12,19 @@ pqxx::result DBConnection::ExecuteLogIn(
   return Execute(LogInSql(user_name, password_hash));
 }
 
-void DBConnection::ExecuteSignUp(const std::string& user_name,
-                                 const std::string& password_hash) const {
-  Execute(SignUpSql(user_name, password_hash));
+pqxx::result DBConnection::ExecuteSignUp(
+    const std::string& user_name, const std::string& password_hash) const {
+  return Execute(SignUpSql(user_name, password_hash));
 }
 
-void DBConnection::ExecuteAddMessage(const std::string& text, int sender_id,
-                                     int receiver_id) const {
-  Execute(SendMessageSql(sender_id, receiver_id, text));
+pqxx::result DBConnection::ExecuteSendMessage(int sender_id, int receiver_id,
+                                              const std::string& text) const {
+  return Execute(SendMessageSql(sender_id, receiver_id, text));
+}
+
+pqxx::result DBConnection::ExecuteGetUserId(
+    const std::string& user_name) const {
+  return Execute(GetIdMessageSql(user_name));
 }
 
 pqxx::result DBConnection::Execute(const std::string& query) const {

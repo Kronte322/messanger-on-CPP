@@ -21,3 +21,8 @@ std::string SendMessageSql(int sender_id, int receiver_id,
          std::to_string(sender_id) + ", " + std::to_string(receiver_id) + ", " +
          "'" + message + "'" + ");";
 }
+
+std::string GetIdMessageSql(const std::string& user_name) {
+  return std::string("SELECT user_id FROM st.user WHERE user_name = '") +
+         user_name + "'";
+}

@@ -12,16 +12,22 @@ class ServerImplementer {
                         DBConnection& db_connection);
 
  private:
-  static std::string ImplementSignUp(const std::string& message,
+  static std::string ImplementSignUp(std::string message,
                                      DBConnection& db_connection);
 
-  static std::string ImplementLogIn(const std::string& message,
+  static std::string ImplementLogIn(std::string message,
                                     DBConnection& db_connection);
 
-  static std::string ImplementQuit(const std::string& message,
+  static std::string ImplementQuit(std::string message,
                                    DBConnection& db_connection);
 
-  std::unordered_map<
-      int, std::function<std::string(const std::string&, DBConnection&)>>
+  static std::string ImplementGetUserId(std::string message,
+                                        DBConnection& db_connection);
+
+  static std::string ImplementTextMessage(std::string message,
+                                          DBConnection& db_connection);
+
+  std::unordered_map<int,
+                     std::function<std::string(std::string, DBConnection&)>>
       actions_;
 };

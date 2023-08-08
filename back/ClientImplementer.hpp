@@ -12,13 +12,16 @@ class ClientImplementer {
   int Implement(const std::string& message, ClientStorage& data);
 
  private:
-  static int ImplementSignUp(const std::string& message, ClientStorage& data);
+  static int ImplementSignUp(std::string message, ClientStorage& data);
 
-  static int ImplementLogIn(const std::string& message, ClientStorage& data);
+  static int ImplementLogIn(std::string message, ClientStorage& data);
 
-  static int ImplementQuit(const std::string& message, ClientStorage& data);
+  static int ImplementQuit(std::string message, ClientStorage& data);
 
-  std::unordered_map<int,
-                     std::function<int(const std::string&, ClientStorage&)>>
+  static int ImplementGetUserId(std::string message, ClientStorage& data);
+
+  static int ImplementSendMessage(std::string message, ClientStorage& data);
+
+  std::unordered_map<int, std::function<int(std::string, ClientStorage&)>>
       actions_;
 };

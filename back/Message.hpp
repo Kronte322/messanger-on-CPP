@@ -3,6 +3,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 #include "Server.hpp"
@@ -12,12 +13,17 @@ const int text_message_id = 1;
 const int log_in_message_id = 2;
 const int sign_up_message_id = 3;
 const int quit_message_id = 7;
+const int get_user_id_message_id = 10;
 const int text_response_id = 4;
 const int log_in_response_id = 5;
 const int sign_up_response_id = 6;
 const int quit_response_id = 8;
+const int get_user_id_response_id = 9;
 }  // namespace SerializationConstants
 
+int GetInt(std::string& message);
+
+std::string GetString(std::string& message);
 class BaseMessage {
  public:
   virtual std::string Serialization() = 0;
@@ -78,6 +84,18 @@ class QuitMessage : public BaseMessage {
  private:
 };
 
+class GetUserIdMessage : public BaseMessage {
+ public:
+  GetUserIdMessage(const std::string& user_name);
+
+  std::string Serialization() override;
+
+  ~GetUserIdMessage();
+
+ private:
+  std::string user_name_;
+};
+
 class TextResponse : public BaseMessage {
  public:
   TextResponse(int code_of_respones);
@@ -123,4 +141,16 @@ class QuitResponse : public BaseMessage {
   ~QuitResponse();
 
  private:
+};
+
+class GetUserIdResponse : public BaseMessage {
+ public:
+  GetUserIdResponse(int id);
+
+  std::string Serialization() override;
+
+  ~GetUserIdResponse();
+
+ private:
+  int id_;
 };

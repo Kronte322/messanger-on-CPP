@@ -90,18 +90,19 @@ void Server::ProcessConnection(int client_discriptor,
       DisconnectMessage(client_address);
       break;
     }
+    std::string request(buffer);
     std::string response;
-    std::cout << std::string(buffer) << '\n';
-    if (std::string(buffer) ==
-        std::to_string(SerializationConstants::quit_message_id)) {
+    std::cout << request << '\n';
+    if (request == std::to_string(SerializationConstants::quit_message_id) ||
+        request.empty()) {
       is_active = false;
     }
     {
       std::lock_guard<std::mutex> guard(mutex_);
       try {
-        response = implementer_.Implement(buffer, db_connection_);
+        response = implementer_.Implement(request, db_connection_);
       } catch (const std::exception& except) {
-        std::cout << except.what() << "99";
+        std::cout << except.what() << "$$$";
       }
     }
 
