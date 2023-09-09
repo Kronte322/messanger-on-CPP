@@ -11,8 +11,9 @@ ServerImplementer::ServerImplementer() {
       std::make_pair(quit_message_id, &ServerImplementer::ImplementQuit),
       std::make_pair(get_user_id_message_id,
                      &ServerImplementer::ImplementGetUserId),
-      std::make_pair(text_message_id,
-                     &ServerImplementer::ImplementTextMessage)};
+      std::make_pair(text_message_id, &ServerImplementer::ImplementTextMessage),
+      std::make_pair(get_messages_message_id,
+                     &ServerImplementer::ImplementGetMessages)};
 }
 
 std::string ServerImplementer::Implement(const std::string& message,
@@ -93,4 +94,23 @@ std::string ServerImplementer::ImplementTextMessage(
     code = -1;
   }
   return TextResponse(code).Serialization();
+}
+
+std::string ServerImplementer::ImplementGetMessages(
+    std::string message, DBConnection& db_connection) {
+  int sender_id = GetInt(message);
+  int receiver_id = GetInt(message);
+  auto first_messages =
+      db_connection.ExecuteGetMessages(sender_id, receiver_id);
+  auto second_messages =
+      db_connection.ExecuteGetMessages(receiver_id, sender_id);
+  std::vector<std::pair<std::string, std::string>> messages;
+  for (const auto& row : first_messages) {
+    messages.emplace_back(row[0].as<std::string>(), row[1].as<std::string>());
+  }
+  messages.emplace_back("", "");
+  for (const auto& row : second_messages) {
+    messages.emplace_back(row[0].as<std::string>(), row[1].as<std::string>());
+  }
+  return GetMessagesResponse(messages).Serialization();
 }

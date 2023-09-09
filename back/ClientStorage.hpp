@@ -6,10 +6,10 @@ class ClientStorage {
  public:
   int& SetUserId();
   int& SetReceiverId();
-  std::vector<std::string>& SetMessages();
+  std::vector<std::pair<std::string, std::string>>& SetMessages();
 
  private:
   int user_id_;
   int receiver_id_;
-  std::vector<std::string> messages_;
+  std::vector<std::pair<std::string, std::string>> messages_;
 };

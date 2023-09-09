@@ -107,6 +107,16 @@ std::string GetUserIdMessage::Serialization() {
 
 GetUserIdMessage::~GetUserIdMessage() = default;
 
+GetMessagesMessage::GetMessagesMessage(int sender_id, int receiver_id)
+    : sender_id_(sender_id), receiver_id_(receiver_id) {}
+
+std::string GetMessagesMessage::Serialization() {
+  return std::to_string(SerializationConstants::get_messages_message_id) + "#" +
+         std::to_string(sender_id_) + "##" + std::to_string(receiver_id_) + "#";
+}
+
+GetMessagesMessage::~GetMessagesMessage() = default;
+
 TextResponse::TextResponse(int code_of_response)
     : code_of_response_(code_of_response) {}
 
@@ -152,3 +162,19 @@ std::string GetUserIdResponse::Serialization() {
 }
 
 GetUserIdResponse::~GetUserIdResponse() = default;
+
+GetMessagesResponse::GetMessagesResponse(
+    const std::vector<std::pair<std::string, std::string>>& messages)
+    : messages_(messages) {}
+
+std::string GetMessagesResponse::Serialization() {
+  std::string res;
+  res += std::to_string(SerializationConstants::get_messages_response_id);
+  for (const auto& item : messages_) {
+    res += "#" + item.first + "#";
+    res += "#" + item.second + "#";
+  }
+  return res;
+}
+
+GetMessagesResponse::~GetMessagesResponse() {}

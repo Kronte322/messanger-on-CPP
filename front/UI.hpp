@@ -2,6 +2,7 @@
 #include <gtkmm.h>
 
 #include <memory>
+#include <mutex>
 #include <vector>
 
 #include "../back/ClientController.hpp"
@@ -68,6 +69,12 @@ class MainWindow : public Window {
  private:
   void OnSendButtonClicked();
   void OnProfileButtonClicked();
+  void OnWindowDraw();
+  void UpdateMessages();
+
+  std::mutex mutex_;
+  bool sign_ = false;
+  int num_of_frames_ = 0;
 };
 
 class UI {

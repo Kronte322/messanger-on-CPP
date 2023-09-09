@@ -61,7 +61,7 @@ std::string DefaultClient::Send(const std::string& message) {
 
 void DefaultClient::ProcessConnection() {
   std::string message;
-  char buf[256];
+  char buf[1024];
   while (is_active_) {
     std::unique_lock lock(mutex_for_cond_var_);
     if (messages_.empty()) {

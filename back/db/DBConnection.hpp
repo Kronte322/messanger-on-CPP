@@ -20,6 +20,10 @@ class DBConnection {
 
   pqxx::result ExecuteGetUserId(const std::string& user_name) const;
 
+  pqxx::result ExecuteGetPresentTime() const;
+
+  pqxx::result ExecuteGetMessages(int sender_id, int receiver_id) const;
+
  private:
   pqxx::result Execute(const std::string& query) const;
 

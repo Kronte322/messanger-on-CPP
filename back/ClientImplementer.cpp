@@ -12,7 +12,9 @@ ClientImplementer::ClientImplementer() {
       std::make_pair(get_user_id_response_id,
                      &ClientImplementer::ImplementGetUserId),
       std::make_pair(text_response_id,
-                     &ClientImplementer::ImplementSendMessage)};
+                     &ClientImplementer::ImplementSendMessage),
+      std::make_pair(get_messages_response_id,
+                     &ClientImplementer::ImplementGetMessages)};
 }
 
 int ClientImplementer::Implement(const std::string& message,
@@ -53,4 +55,16 @@ int ClientImplementer::ImplementSendMessage(std::string message,
                                             ClientStorage& data) {
   int code = GetInt(message);
   return code;
+}
+
+int ClientImplementer::ImplementGetMessages(std::string message,
+                                            ClientStorage& data) {
+  decltype(auto) messages = data.SetMessages();
+  messages.clear();
+  while (!message.empty()) {
+    auto date = GetString(message);
+    auto text = GetString(message);
+    messages.emplace_back(date, text);
+  }
+  return 1;
 }

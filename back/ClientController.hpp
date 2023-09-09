@@ -19,6 +19,8 @@ class ClientController {
   int SendTextMessage(int sender_id, int receiver_id,
                       const std::string& message);
 
+  int SendGetMessagesMessage(int sender_id, int receiver_id);
+
  private:
   DefaultClient& client_;
   ClientStorage& data_;

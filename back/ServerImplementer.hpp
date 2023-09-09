@@ -27,6 +27,9 @@ class ServerImplementer {
   static std::string ImplementTextMessage(std::string message,
                                           DBConnection& db_connection);
 
+  static std::string ImplementGetMessages(std::string message,
+                                          DBConnection& db_connection);
+
   std::unordered_map<int,
                      std::function<std::string(std::string, DBConnection&)>>
       actions_;

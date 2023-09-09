@@ -22,6 +22,8 @@ class ClientImplementer {
 
   static int ImplementSendMessage(std::string message, ClientStorage& data);
 
+  static int ImplementGetMessages(std::string message, ClientStorage& data);
+
   std::unordered_map<int, std::function<int(std::string, ClientStorage&)>>
       actions_;
 };

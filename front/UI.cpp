@@ -1,7 +1,10 @@
 #include "./UI.hpp"
 
+#include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <thread>
+#include <tuple>
 
 UI::UI(ClientController& client_controller, ClientStorage& client_storage)
     : app_(Gtk::Application::create("Messenger")),
@@ -190,6 +193,8 @@ void MainWindow::Init() {
 
   auto window = builder_->get_widget<Gtk::Window>("window");
 
+  window->signal_map().connect([this]() { OnWindowDraw(); });
+
   auto send_button = builder_->get_widget<Gtk::Button>("send_button");
   send_button->signal_clicked().connect([this]() { OnSendButtonClicked(); });
 
@@ -201,10 +206,14 @@ void MainWindow::Init() {
 void MainWindow::OpenWindow() {
   auto window = builder_->get_widget<Gtk::Window>("window");
   window->show();
+  window->set_visible(true);
+  window->signal_map().connect([this]() { OnWindowDraw(); });
   ui_.SetApp()->add_window(*window);
+  sign_ = true;
 }
 
 void MainWindow::CloseWindow() {
+  sign_ = false;
   auto window = builder_->get_widget<Gtk::Window>("window");
   window->hide();
 }
@@ -241,8 +250,63 @@ void MainWindow::OnSendButtonClicked() {
         ui_.SetClientStorage().SetUserId(),
         ui_.SetClientStorage().SetReceiverId(), text);
   }
-  // auto messages = builder_->get_widget<Gtk::TextView>("messages_text_view");
-  // messages->get_buffer()->set_text(message);
+  UpdateMessages();
 }
 
 void MainWindow::OnProfileButtonClicked() {}
+
+void MainWindow::OnWindowDraw() {
+  // while (true) {
+  //   using namespace std::chrono_literals;
+  //   std::this_thread::sleep_for(100ms);
+  //   {
+  //     std::lock_guard guard(mutex_);
+  //     if (!sign_) {
+  //       break;
+  //     }
+  //   }
+  std::cout << 1;
+  ++num_of_frames_;
+  if (num_of_frames_ % 10 == 0) {
+    std::cout << num_of_frames_ << std::endl;
+    UpdateMessages();
+  }
+  // }
+}
+
+void MainWindow::UpdateMessages() {
+  auto messages_response = ui_.SetClientController().SendGetMessagesMessage(
+      ui_.SetClientStorage().SetUserId(),
+      ui_.SetClientStorage().SetReceiverId());
+  auto messages = ui_.SetClientStorage().SetMessages();
+  if (!messages.empty()) {
+    auto field = builder_->get_widget<Gtk::TextView>("messages_text_view");
+    std::string text;
+    std::vector<std::tuple<std::string, std::string, std::string>> interm;
+    size_t i = 0;
+    for (; i < messages.size(); ++i) {
+      if (messages[i].first == "") {
+        ++i;
+        break;
+      }
+      interm.emplace_back(std::to_string(ui_.SetClientStorage().SetUserId()),
+                          messages[i].first, messages[i].second);
+    }
+    for (; i < messages.size(); ++i) {
+      interm.emplace_back(
+          std::to_string(ui_.SetClientStorage().SetReceiverId()),
+          messages[i].first, messages[i].second);
+    }
+    std::sort(
+        interm.begin(), interm.end(),
+        [](const std::tuple<std::string, std::string, std::string>& first,
+           const std::tuple<std::string, std::string, std::string>& second) {
+          return std::get<1>(first) < std::get<1>(second);
+        });
+    for (const auto& item : interm) {
+      text += std::get<0>(item) + ' ' + std::get<1>(item) + ' ' +
+              std::get<2>(item) + "\n\n";
+    }
+    field->get_buffer()->set_text(text);
+  }
+}

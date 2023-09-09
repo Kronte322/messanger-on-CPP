@@ -15,14 +15,24 @@ std::string LogInSql(const std::string& user_name,
 }
 
 std::string SendMessageSql(int sender_id, int receiver_id,
-                           const std::string& message) {
+                           const std::string& message,
+                           const std::string& date) {
   return std::string(
-             "INSERT INTO st.message(sender, receiver, message) VALUES (") +
+             "INSERT INTO st.message(sender, receiver, message, time) VALUES "
+             "(") +
          std::to_string(sender_id) + ", " + std::to_string(receiver_id) + ", " +
-         "'" + message + "'" + ");";
+         "'" + message + "'" + ", '" + date + "'" + ");";
 }
 
 std::string GetIdMessageSql(const std::string& user_name) {
   return std::string("SELECT user_id FROM st.user WHERE user_name = '") +
          user_name + "'";
+}
+
+std::string GetPresentTimeSql() { return std::string("Select NOW()"); }
+
+std::string GetMessagesSql(int sender_id, int receiver_id) {
+  return std::string("SELECT time, message FROM st.message WHERE sender = ") +
+         std::to_string(sender_id) + " AND " +
+         "receiver = " + std::to_string(receiver_id);
 }

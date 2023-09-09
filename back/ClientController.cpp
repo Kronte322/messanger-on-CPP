@@ -32,3 +32,9 @@ int ClientController::SendTextMessage(int sender_id, int receiver_id,
   auto response = client_.Send(message.Serialization());
   return implementer_.Implement(response, data_);
 }
+
+int ClientController::SendGetMessagesMessage(int sender_id, int receiver_id) {
+  auto message = GetMessagesMessage(sender_id, receiver_id);
+  auto response = client_.Send(message.Serialization());
+  return implementer_.Implement(response, data_);
+}

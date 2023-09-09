@@ -14,11 +14,13 @@ const int log_in_message_id = 2;
 const int sign_up_message_id = 3;
 const int quit_message_id = 7;
 const int get_user_id_message_id = 10;
+const int get_messages_message_id = 12;
 const int text_response_id = 4;
 const int log_in_response_id = 5;
 const int sign_up_response_id = 6;
 const int quit_response_id = 8;
 const int get_user_id_response_id = 9;
+const int get_messages_response_id = 11;
 }  // namespace SerializationConstants
 
 int GetInt(std::string& message);
@@ -96,6 +98,19 @@ class GetUserIdMessage : public BaseMessage {
   std::string user_name_;
 };
 
+class GetMessagesMessage : public BaseMessage {
+ public:
+  GetMessagesMessage(int sender_id, int receiver_id);
+
+  std::string Serialization() override;
+
+  ~GetMessagesMessage();
+
+ private:
+  int sender_id_;
+  int receiver_id_;
+};
+
 class TextResponse : public BaseMessage {
  public:
   TextResponse(int code_of_respones);
@@ -153,4 +168,17 @@ class GetUserIdResponse : public BaseMessage {
 
  private:
   int id_;
+};
+
+class GetMessagesResponse : public BaseMessage {
+ public:
+  GetMessagesResponse(
+      const std::vector<std::pair<std::string, std::string>>& messages);
+
+  std::string Serialization() override;
+
+  ~GetMessagesResponse();
+
+ private:
+  std::vector<std::pair<std::string, std::string>> messages_;
 };
